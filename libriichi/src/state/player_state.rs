@@ -127,6 +127,7 @@ pub struct PlayerState {
     pub(super) doras_owned: [u8; 4],
     pub(super) doras_seen: u8,
 
+    /// 5p/m/s r 
     pub(super) akas_in_hand: [bool; 3],
 
     /// For shanten calc.
