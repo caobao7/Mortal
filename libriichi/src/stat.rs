@@ -1,8 +1,8 @@
 use crate::algo::point::Point;
 use crate::mjai::Event;
 use crate::py_helper::add_submodule;
+use crate::rankings::Rankings;
 use crate::vec_ops::vec_add_assign;
-use std::array;
 use std::fmt;
 use std::fs::File;
 use std::io::prelude::*;
@@ -273,19 +273,12 @@ impl Stat {
         let mut riichi_accepted = false;
         let mut others_riichi_declared = false;
         let mut cur_oya = 0;
-        let mut cur_kyotaku = 0;
         let mut jun = 0;
         let mut fuuro_num = 0;
         events.iter().for_each(|ev| match *ev {
-            Event::StartKyoku {
-                oya,
-                scores,
-                kyotaku,
-                ..
-            } => {
+            Event::StartKyoku { oya, scores, .. } => {
                 stat.round += 1;
                 cur_scores = scores;
-                cur_kyotaku = kyotaku;
                 riichi_declared = false;
                 riichi_accepted = false;
                 others_riichi_declared = false;
@@ -329,7 +322,6 @@ impl Stat {
 
             Event::ReachAccepted { actor } => {
                 cur_scores[actor as usize] -= 1000;
-                cur_kyotaku += 1;
                 if actor == player_id {
                     riichi_accepted = true;
                 }
@@ -343,7 +335,6 @@ impl Stat {
             } => {
                 let deltas = deltas.expect("deltas is required for analyzing");
                 vec_add_assign(&mut cur_scores, &deltas);
-                cur_kyotaku = 0;
 
                 if actor == player_id {
                     let point = deltas[player_id as usize] as i64 - riichi_accepted as i64 * 1000;
@@ -425,22 +416,22 @@ impl Stat {
             _ => (),
         });
 
-        if cur_kyotaku > 0 {
-            *cur_scores.iter_mut().min_by_key(|s| -**s).unwrap() += cur_kyotaku as i32 * 1000;
+        let rk = Rankings::new(cur_scores);
+
+        // assume the sum of scores to be 100k
+        let sum: i32 = cur_scores.iter().sum();
+        if sum < 100_000 {
+            cur_scores[rk.player_by_rank[0] as usize] += 100_000 - sum;
         }
 
+        // assume the starting point to be 25000
         let final_score = cur_scores[player_id as usize];
         stat.point = final_score as i64 - 25000;
         if final_score < 0 {
             stat.tobi = 1;
         }
 
-        let mut scores: [_; 4] = array::from_fn(|id| (id, cur_scores[id]));
-        scores.sort_by_key(|(_, s)| -s);
-        let rank = scores
-            .into_iter()
-            .position(|(id, _)| id as u8 == player_id)
-            .unwrap();
+        let rank = rk.rank_by_player[player_id as usize];
         match rank {
             0 => stat.rank_1 = 1,
             1 => stat.rank_2 = 1,
@@ -455,8 +446,7 @@ impl Stat {
 #[pymethods]
 impl Stat {
     #[staticmethod]
-    #[pyo3(text_signature = "(dir, player_name, disable_progress_bar)")]
-    #[args("*", disable_progress_bar = "false")]
+    #[pyo3(signature = (dir, player_name, disable_progress_bar=false))]
     pub fn from_dir(dir: &str, player_name: &str, disable_progress_bar: bool) -> Result<Self> {
         let bar = if disable_progress_bar {
             ProgressBar::hidden()
@@ -509,7 +499,6 @@ impl Stat {
     }
 
     #[staticmethod]
-    #[pyo3(text_signature = "(log, player_id)")]
     pub fn from_log(log: &str, player_id: u8) -> Result<Self> {
         let events = log
             .lines()
@@ -519,13 +508,11 @@ impl Stat {
         Ok(Self::from_game(&events, player_id))
     }
 
-    #[pyo3(text_signature = "($self, pts)")]
     #[inline]
     #[must_use]
     pub const fn total_pt(&self, pts: [i64; 4]) -> i64 {
         self.rank_1 * pts[0] + self.rank_2 * pts[1] + self.rank_3 * pts[2] + self.rank_4 * pts[3]
     }
-    #[pyo3(text_signature = "($self, pts)")]
     #[inline]
     #[must_use]
     pub fn avg_pt(&self, pts: [i64; 4]) -> f64 {

@@ -563,7 +563,7 @@ impl<'sup, 'a> DivWorker<'sup, 'a> {
                 && self.sup.is_menzen
                 && self.menzen_shuntsu.len() >= 2
             {
-                let mut shuntsu_marks = [0u8; 3];
+                let mut shuntsu_marks = [0_u8; 3];
                 let has_ipeikou = self.menzen_shuntsu.iter().any(|&t| {
                     let kind = t as usize / 9;
                     let num = t % 9;
@@ -649,12 +649,7 @@ impl<'sup, 'a> DivWorker<'sup, 'a> {
             let has_ryuisou = self
                 .all_kotsu_and_kantsu()
                 .chain(iter::once(self.pair_tile))
-                .all(|k| {
-                    matches_tu8!(
-                        k,
-                        2s | 3s | 4s | 6s | 8s | F
-                    )
-                })
+                .all(|k| matches_tu8!(k, 2s | 3s | 4s | 6s | 8s | F))
                 && self.all_shuntsu().all(|s| s == tu8!(2s)); // only 234s is possible for shuntsu in ryuisou
             if has_ryuisou {
                 // 緑一色
