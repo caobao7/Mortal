@@ -3,7 +3,7 @@ use crate::py_helper::add_submodule;
 use pyo3::prelude::*;
 
 pub const MAX_VERSION: u32 = 3;
-
+/// kan的两个区别还不太懂啊 @zacktan
 pub const ACTION_SPACE: usize = 37 // discard | kan (choice)
                               + 1  // riichi
                               + 3  // chi

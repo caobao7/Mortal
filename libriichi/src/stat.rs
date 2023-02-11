@@ -260,6 +260,7 @@ Nagashi mangan (rate) {} ({:.9})"#,
 impl Stat {
     /// We do not use `add_game(&mut self)` here as `Stat` impls `Add` and `Sum` so we
     /// can use rayon easier.
+    /// 根据事件和player_id 构造状态 @zacktan
     #[must_use]
     pub fn from_game(events: &[Event], player_id: u8) -> Self {
         let mut stat = Self {

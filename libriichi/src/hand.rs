@@ -11,6 +11,7 @@ use crate::{must_tile, tuz};
 use anyhow::{bail, ensure, Result};
 
 /// Spaces are allowed.
+/// z代表的是字牌 0m代表的是对应类型的红宝牌
 pub fn hand_with_aka(s: &str) -> Result<[u8; 37]> {
     // We will be using bytes instead of chars afterwards.
     ensure!(s.is_ascii(), "hand {s} contains non-ascii content");

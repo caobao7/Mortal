@@ -7,7 +7,9 @@ use boomphf::hashmap::BoomHashMap;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
+/// mjai 牌的种类数
 const MJAI_PAI_STRINGS_LEN: usize = 3 * 9 + 4 + 3 + 3 + 1;
+/// mjai id-牌的映射
 const MJAI_PAI_STRINGS: [&str; MJAI_PAI_STRINGS_LEN] = [
     "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m", // m
     "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p", // p
@@ -49,6 +51,7 @@ impl Tile {
         self.0 as usize
     }
 
+    /// 把红宝牌转成普通牌
     #[inline]
     #[must_use]
     pub const fn deaka(self) -> Self {
@@ -60,6 +63,7 @@ impl Tile {
         }
     }
 
+    /// 把5m/5p/5s转成对应的红宝牌
     #[inline]
     #[must_use]
     pub const fn akaize(self) -> Self {
@@ -71,18 +75,24 @@ impl Tile {
         }
     }
 
+    /// 判断是否为红宝牌
+    /// 是返回true 不是返回false
     #[inline]
     #[must_use]
     pub const fn is_aka(self) -> bool {
         matches_tu8!(self.0, 5mr | 5pr | 5sr)
     }
 
+    /// 判断是否为字牌
+    /// 是返回true 不是返回false
     #[inline]
     #[must_use]
     pub const fn is_jihai(self) -> bool {
         matches_tu8!(self.0, E | S | W | N | P | F | C)
     }
 
+    /// 判断是否为幺九牌
+    /// 是返回true 不是返回false
     #[inline]
     #[must_use]
     pub const fn is_yaokyuu(self) -> bool {
@@ -92,12 +102,18 @@ impl Tile {
         )
     }
 
+    /// 判断牌是否不合法
+    /// 不合法返回true 合法返回false
     #[inline]
     #[must_use]
     pub const fn is_unknown(self) -> bool {
         self.0 >= tu8!(?)
     }
 
+    /// 返回同种类的下一张牌 
+    /// 1m->2m ... 9m->1m
+    /// E->S ... N->E 
+    /// P->F ... C->P 
     #[inline]
     #[must_use]
     pub const fn next(self) -> Self {
@@ -117,6 +133,10 @@ impl Tile {
         }
     }
 
+    /// 返回同种类的前一张牌 
+    /// 1m<-2m ... 9m<-1m
+    /// E<-S ... N<-E 
+    /// P<-F ... C<-P 
     #[inline]
     #[must_use]
     pub const fn prev(self) -> Self {
@@ -135,6 +155,7 @@ impl Tile {
         }
     }
 
+    /// p和m互转
     #[inline]
     #[must_use]
     pub const fn augment(self) -> Self {
@@ -163,6 +184,7 @@ pub enum InvalidTile {
     String(String),
 }
 
+/// 从u8转到对应的牌
 impl TryFrom<u8> for Tile {
     type Error = InvalidTile;
 
@@ -171,6 +193,7 @@ impl TryFrom<u8> for Tile {
     }
 }
 
+/// 从usize转到对应的牌
 impl TryFrom<usize> for Tile {
     type Error = InvalidTile;
 
@@ -185,6 +208,7 @@ impl TryFrom<usize> for Tile {
     }
 }
 
+/// 从string转到对应的牌
 impl FromStr for Tile {
     type Err = InvalidTile;
 
@@ -254,5 +278,11 @@ mod test {
             assert_eq!(tile.prev().next(), tile.deaka());
             assert_eq!(tile.next().prev(), tile.deaka());
         });
+    }
+    #[test]
+    fn augment_test() {
+        assert_eq!(Tile(0u8).augment(), Tile(9u8));
+        assert_eq!(Tile(9u8).augment(), Tile(0u8));
+        assert_eq!(Tile(18u8).augment(), Tile(18u8));
     }
 }

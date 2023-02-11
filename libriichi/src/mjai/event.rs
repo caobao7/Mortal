@@ -20,7 +20,7 @@ use serde_with::{serde_as, skip_serializing_none, TryFromInto};
 pub enum Event {
     #[default]
     None,
-
+    /// 一个半庄游戏的开始
     StartGame {
         #[serde(default)]
         names: [String; 4],
@@ -28,32 +28,43 @@ pub enum Event {
         /// Consists of (nonce, key).
         seed: Option<(u64, u64)>,
     },
+    /// 一局游戏的开始
     StartKyoku {
+        /// 场风
         bakaze: Tile,
+        /// dora指示牌
         dora_marker: Tile,
         /// Counts from 1
         #[serde_as(deserialize_as = "TryFromInto<BoundedU8<1, 4>>")]
+        /// 第几局 东一 ~ 西四 从1开始计数
         kyoku: u8,
+        /// 几本场
         honba: u8,
+        /// 累计点棒
         kyotaku: u8,
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
+        /// 亲
         oya: u8,
+        /// 点数
         scores: [i32; 4],
+        /// 各家手牌
         tehais: [[Tile; 13]; 4],
     },
-
+    /// 摸牌
     Tsumo {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
         pai: Tile,
     },
+    /// 打牌
     Dahai {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
         pai: Tile,
+        /// 摸切
         tsumogiri: bool,
     },
-
+    /// 吃
     Chi {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
@@ -62,6 +73,7 @@ pub enum Event {
         pai: Tile,
         consumed: [Tile; 2],
     },
+    /// 碰
     Pon {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
@@ -70,6 +82,7 @@ pub enum Event {
         pai: Tile,
         consumed: [Tile; 2],
     },
+    /// 大明杠
     Daiminkan {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
@@ -78,40 +91,47 @@ pub enum Event {
         pai: Tile,
         consumed: [Tile; 3],
     },
+    /// 明杠
     Kakan {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
         pai: Tile,
         consumed: [Tile; 3],
     },
+    /// 暗杠
     Ankan {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
         consumed: [Tile; 4],
     },
+    /// 翻开dora指示牌
     Dora {
         dora_marker: Tile,
     },
-
+    /// 立直
     Reach {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
     },
+    /// 立直成功
     ReachAccepted {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
     },
-
+    /// 荣！
     Hora {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         target: u8,
-
+        /// 分数差（丢立直棒的减不在这里计算，但是收立直棒的点加在这里计算）
         deltas: Option<[i32; 4]>,
+        /// 里宝牌指示牌
         ura_markers: Option<Vec<Tile>>,
     },
+    /// 流局
     Ryukyoku {
+        /// 分数差（丢立直棒的减不在这里计算，但是收立直棒的点加在这里计算）
         deltas: Option<[i32; 4]>,
     },
 
@@ -145,6 +165,7 @@ pub struct Metadata {
     pub batch_size: Option<usize>,
     pub eval_time_ns: Option<u64>,
     pub shanten: Option<i8>,
+    /// 门清
     pub at_furiten: Option<bool>,
     pub kan_select: Option<Box<Metadata>>,
 }
@@ -175,6 +196,7 @@ impl Event {
         }
     }
 
+    /// 判断是否为游戏宣告，dora指示牌展示，荣，放下立直棒
     #[inline]
     #[must_use]
     pub const fn is_in_game_announce(&self) -> bool {
@@ -262,6 +284,7 @@ impl From<Event> for EventExt {
     }
 }
 
+/// UT
 #[cfg(test)]
 mod test {
     use super::*;

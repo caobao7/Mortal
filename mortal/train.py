@@ -203,10 +203,11 @@ def train():
             actions = actions.to(dtype=torch.int64, device=device)
             masks = masks.to(dtype=torch.bool, device=device)
             steps_to_done = steps_to_done.to(dtype=torch.int64, device=device)
+            # 这他妈好像是用grp然后很神奇的算出来的。还不是很懂
             kyoku_rewards = kyoku_rewards.to(dtype=torch.float64, device=device)
             player_ranks = player_ranks.to(dtype=torch.int64, device=device)
             assert masks[range(batch_size), actions].all()
-
+            # action数*reward，然后这个action数好像不止是自己的action数，变成了target？？ @zacktan
             q_target_mc = gamma ** steps_to_done * kyoku_rewards
             q_target_mc = q_target_mc.to(torch.float32)
 

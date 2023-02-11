@@ -1,4 +1,5 @@
 /// Used for making const tile IDs in u8.
+/// 牌到id的映射
 ///
 /// ```
 /// use riichi::tu8;
