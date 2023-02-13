@@ -200,6 +200,7 @@ impl<'a> ObsEncoderContext<'a> {
 
         let max_kawa_len = state.kawa.iter().map(|k| k.len()).max().unwrap();
         if self.version == 3 {
+            // @zacktan bug: tile may be same
             for (turn, kawa_item) in state.kawa[0].iter().enumerate() {
                 if let Some(kawa_item) = kawa_item {
                     let sutehai = kawa_item.sutehai;
@@ -238,6 +239,7 @@ impl<'a> ObsEncoderContext<'a> {
                     self.idx += 6;
                 }
                 3 => {
+                    // @zacktan bug: tile may be same
                     for (turn, kawa_item) in player_kawa.iter().enumerate() {
                         if let Some(kawa_item) = kawa_item {
                             let sutehai = kawa_item.sutehai;

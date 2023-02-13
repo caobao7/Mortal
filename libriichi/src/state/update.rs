@@ -36,6 +36,7 @@ impl PlayerState {
                 self.at_furiten = true;
             }
             if self.chankan_chance.take().is_some() {
+                // @zacktan 关注，这里好像是规则错误，抢杠期间是可以存在一发的
                 self.at_ippatsu = false;
             }
 

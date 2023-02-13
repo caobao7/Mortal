@@ -4,9 +4,12 @@ use std::fmt;
 use serde::Serialize;
 use tinyvec::ArrayVec;
 
+/// 牌河
 #[derive(Debug, Clone, Serialize)]
 pub(super) struct KawaItem {
+    /// 吃碰后扔的牌
     pub(super) chi_pon: Option<ChiPon>,
+    /// 杠后扔的牌
     pub(super) kan: ArrayVec<[Tile; 4]>,
     pub(super) sutehai: Sutehai,
 }
@@ -15,8 +18,11 @@ pub(super) struct KawaItem {
 pub(super) struct Sutehai {
     pub(super) tile: Tile,
     // only for normal dora, aka is not included
+    /// 是否dora牌
     pub(super) is_dora: bool,
+    /// 是否手切
     pub(super) is_tedashi: bool,
+    /// 是否立直宣告牌
     pub(super) is_riichi: bool,
 }
 

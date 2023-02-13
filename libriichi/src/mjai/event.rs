@@ -91,7 +91,7 @@ pub enum Event {
         pai: Tile,
         consumed: [Tile; 3],
     },
-    /// 明杠
+    /// 加杠
     Kakan {
         #[serde_as(deserialize_as = "TryFromInto<Actor>")]
         actor: u8,
