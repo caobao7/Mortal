@@ -51,6 +51,7 @@ class GrpFileDatasetsIter(IterableDataset):
             rank_by_player = game.take_rank_by_player()
 
             for i in range(feature.shape[0]):
+                # [...i + 1] 
                 inputs_seq = torch.as_tensor(feature[:i + 1], dtype=torch.float64)
                 self.buffer.append((
                     inputs_seq,

@@ -155,10 +155,11 @@ impl GameplayLoader {
             .map(|f| {
                 let filename = f.as_ref();
                 let inner = || {
-                    let file = File::open(filename)?;
-                    let mut gz = GzDecoder::new(file);
+                    let mut file = File::open(filename)?;
+                    // let mut gz = GzDecoder::new(file);
                     let mut raw = String::new();
-                    gz.read_to_string(&mut raw)?;
+                    // gz.read_to_string(&mut raw)?;
+                    file.read_to_string(&mut raw)?;
                     self.load_log(&raw)
                 };
                 inner().with_context(|| format!("error when reading {filename}"))

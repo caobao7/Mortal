@@ -359,7 +359,8 @@ impl PlayerState {
                     consumed,
                     target_tile: pai,
                 });
-
+                
+                // 这里不是自身直接返回的原因是因为这是吃event，对于此类event，你没法做任何事，下放pon kan同。
                 if actor_rel != 0 {
                     consumed.into_iter().for_each(|t| self.witness_tile(t));
                     result

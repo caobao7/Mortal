@@ -240,6 +240,7 @@ impl<'a> ObsEncoderContext<'a> {
                 }
                 3 => {
                     // @zacktan bug: tile may be same
+                    // 这个特征是用来表明牌的重要性，越重要的牌对应的值越小，exp(x) 
                     for (turn, kawa_item) in player_kawa.iter().enumerate() {
                         if let Some(kawa_item) = kawa_item {
                             let sutehai = kawa_item.sutehai;
