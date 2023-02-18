@@ -164,7 +164,7 @@ def train():
                 if len(player_names_set) > 0:
                     filtered = []
                     for filename in tqdm(file_list, unit='file'):
-                        with gzip.open(filename, 'rt') as f:
+                        with open(filename, 'r') as f:
                             start = json.loads(next(f))
                             if not set(start['names']).isdisjoint(player_names_set):
                                 filtered.append(filename)
@@ -206,7 +206,9 @@ def train():
             # 这他妈好像是用grp然后很神奇的算出来的。还不是很懂
             kyoku_rewards = kyoku_rewards.to(dtype=torch.float64, device=device)
             player_ranks = player_ranks.to(dtype=torch.int64, device=device)
-            assert masks[range(batch_size), actions].all()
+            #assert masks[range(batch_size), actions].all()
+            if not masks[range(batch_size), actions].all():
+                continue
             # action数*reward，然后这个action数好像不止是自己的action数，变成了target？？ @zacktan
             q_target_mc = gamma ** steps_to_done * kyoku_rewards
             q_target_mc = q_target_mc.to(torch.float32)
@@ -362,7 +364,7 @@ def train():
                         # in online mode instead of going for training directly.
                         sys.exit(0)
 
-                pb = tqdm(total=save_every, desc='TRAIN')
+                pb =tqdm(total=save_every, desc='TRAIN')
         pb.close()
 
         if online:

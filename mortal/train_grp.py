@@ -140,7 +140,7 @@ def train():
         dataset = train_file_data,
         batch_size = batch_size,
         drop_last = True,
-        num_workers = 1,
+        num_workers = 0,
         collate_fn = collate,
     ))
 
@@ -153,7 +153,7 @@ def train():
         dataset = val_file_data,
         batch_size = batch_size,
         drop_last = True,
-        num_workers = 1,
+        num_workers = 0,
         collate_fn = collate,
     ))
 
@@ -177,7 +177,6 @@ def train():
         logits = grp.forward_packed(inputs)
         labels = grp.get_label(rank_by_players)
         loss = F.cross_entropy(logits, labels)
-
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
