@@ -13,14 +13,12 @@ device = 'cuda:0'
 enable_cudnn_benchmark = false
 enable_amp = false
 
-#batch_size = 512
-batch_size = 612
+batch_size = 512
 opt_step_every = 1
 
 save_every = 400
 test_every = 20000
-#submit_every = 400
-submit_every = 10000
+submit_every = 400
 
 # using env `TRAIN_PLAY_PROFILE`
 [train_play.default]
@@ -45,9 +43,8 @@ enable_augmentation = false
 augmented_first = false
 
 [env]
-gamma = 0.75
+gamma = 1
 pts = [3.0, 1.5, 0.0, -4.5]
-#pts = [3.0, 1.7, -0.2, -4.5]
 
 [resnet]
 conv_channels = 192
@@ -99,7 +96,7 @@ buffer_dir = '/home/zacktan/train/Mortal/to/buffer'
 drain_dir = '/home/zacktan/train/Mortal/to/drain'
 sample_reuse_rate = 0
 sample_reuse_threshold = 0
-capacity = 3600
+capacity = 1600
 force_sequential = false
 
 [test]
@@ -113,7 +110,7 @@ log_dir = '/home/zacktan/train/Mortal/to/1v3'
 [1v3.challenger]
 device = 'cuda:0'
 name = 'mortal'
-state_file = '/home/zacktan/train/Mortal/to/best.pth'
+state_file = '/home/zacktan/train/Mortal/to/mortalv3.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true
@@ -121,7 +118,7 @@ enable_rule_based_agari_guard = true
 [1v3.champion]
 device = 'cuda:0'
 name = 'baseline'
-state_file = '/home/zacktan/train/Mortal/to/mortalv5.pth'
+state_file = '/home/zacktan/train/Mortal/to/mortalv2.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true

@@ -259,7 +259,7 @@ def train():
                 all_q_target_1d = all_q_target.cpu().numpy().flatten()[::128]
 
                 writer.add_scalar('loss/dqn_loss', stats['dqn_loss'] / save_every, steps)
-                if not online:
+                if not online :
                     writer.add_scalar('loss/cql_loss', stats['cql_loss'] / save_every, steps)
                 writer.add_scalar('loss/next_rank_loss', stats['next_rank_loss'] / save_every, steps)
                 writer.add_scalar('hparam/lr', scheduler.get_last_lr()[0], steps)
@@ -288,7 +288,7 @@ def train():
                 }
                 torch.save(state, state_file)
 
-                if online and steps % submit_every != 0:
+                if online and steps % submit_every == 0:
                     submit_param(None, mortal, current_dqn, is_idle=False)
                     logging.info('param has been submitted')
 
@@ -372,10 +372,13 @@ def train():
             logging.info('param has been submitted')
 
     while True:
-        train_epoch()
-        gc.collect()
-        torch.cuda.empty_cache()
-        torch.cuda.synchronize()
+        try:
+            train_epoch()
+            gc.collect()
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+        except Exception as e:
+            print(e)
         if not online:
             # only run one epoch for offline for easier control
             break
