@@ -122,22 +122,7 @@ class Brain(nn.Module):
         actv_builder = partial(nn.Mish, inplace=True)
         pre_actv = True
 
-        match version:
-            case 1:
-                actv_builder = partial(nn.ReLU, inplace=True)
-                pre_actv = False
-                self.latent_net = nn.Sequential(
-                    nn.Linear(1024, 512),
-                    nn.ReLU(inplace=True),
-                )
-                self.mu_head = nn.Linear(512, 512)
-                self.logsig_head = nn.Linear(512, 512)
-            case 2:
-                pass
-            case 3:
-                norm_builder = partial(nn.BatchNorm1d, conv_channels, momentum=0.01, eps=1e-3)
-            case _:
-                raise ValueError(f'Unexpected version {self.version}')
+        norm_builder = partial(nn.BatchNorm1d, conv_channels, momentum=0.01, eps=1e-3)
 
         self.encoder = ResNet(
             in_channels = in_channels,
@@ -157,17 +142,7 @@ class Brain(nn.Module):
             assert invisible_obs is not None
             obs = torch.cat((obs, invisible_obs), dim=1)
         phi = self.encoder(obs)
-
-        match self.version:
-            case 1:
-                latent_out = self.latent_net(phi)
-                mu = self.mu_head(latent_out)
-                logsig = self.logsig_head(latent_out)
-                return mu, logsig
-            case 2 | 3:
-                return F.mish(phi)
-            case _:
-                raise ValueError(f'Unexpected version {self.version}')
+        return F.mish(phi)
 
     def train(self, mode=True):
         super().train(mode)
@@ -212,22 +187,17 @@ class DQN(nn.Module):
     def __init__(self, *, version=1):
         super().__init__()
         self.version = version
-        match version:
-            case 1:
-                self.v_head = nn.Linear(512, 1)
-                self.a_head = nn.Linear(512, ACTION_SPACE)
-            case 2 | 3:
-                hidden_size = 512 if version == 2 else 256
-                self.v_head = nn.Sequential(
-                    nn.Linear(1024, hidden_size),
-                    nn.Mish(inplace=True),
-                    nn.Linear(hidden_size, 1),
-                )
-                self.a_head = nn.Sequential(
-                    nn.Linear(1024, hidden_size),
-                    nn.Mish(inplace=True),
-                    nn.Linear(hidden_size, ACTION_SPACE),
-                )
+        hidden_size = 512 if version == 2 else 256
+        self.v_head = nn.Sequential(
+            nn.Linear(1024, hidden_size),
+            nn.Mish(inplace=True),
+            nn.Linear(hidden_size, 1),
+        )
+        self.a_head = nn.Sequential(
+            nn.Linear(1024, hidden_size),
+            nn.Mish(inplace=True),
+            nn.Linear(hidden_size, ACTION_SPACE),
+        )
 
     def forward(self, phi, mask):
         v = self.v_head(phi)

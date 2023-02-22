@@ -35,11 +35,9 @@ class MortalEngine:
         self.boltzmann_temp = boltzmann_temp
 
     def react_batch(self, obs, masks, invisible_obs):
-        with (
-            torch.autocast(self.device.type, enabled=self.enable_amp),
-            torch.no_grad(),
-        ):
-            return self._react_batch(obs, masks, invisible_obs)
+        with torch.autocast(self.device.type, enabled=self.enable_amp):
+            with torch.no_grad():
+            	return self._react_batch(obs, masks, invisible_obs)
 
     def _react_batch(self, obs, masks, invisible_obs):
         obs = torch.as_tensor(np.stack(obs, axis=0), device=self.device)
@@ -49,17 +47,8 @@ class MortalEngine:
             invisible_obs = torch.as_tensor(np.stack(invisible_obs, axis=0), device=self.device)
         batch_size = obs.shape[0]
 
-        match self.version:
-            case 1:
-                mu, logsig = self.brain(obs, invisible_obs)
-                if self.stochastic_latent:
-                    latent = Normal(mu, logsig.exp() + 1e-6).sample()
-                else:
-                    latent = mu
-                q_out = self.dqn(latent, masks)
-            case 2 | 3:
-                phi = self.brain(obs)
-                q_out = self.dqn(phi, masks)
+        phi = self.brain(obs)
+        q_out = self.dqn(phi, masks)
 
         if self.boltzmann_epsilon > 0:
             is_greedy = torch.full((batch_size,), 1-self.boltzmann_epsilon, device=self.device).bernoulli().to(torch.bool)

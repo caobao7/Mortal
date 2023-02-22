@@ -5,16 +5,15 @@
 version = 3
 online = false
 
-state_file = '/home/zacktan/train/Mortal/to/mortal.pth'
-best_state_file = '/home/zacktan/train/Mortal/to/best.pth'
-tensorboard_dir = '/home/zacktan/train/Mortal/to/dir'
+state_file = '/data/train/Mortal/to/mortal.pth'
+best_state_file = '/data/train/Mortal/to/best.pth'
+tensorboard_dir = '/data/train/Mortal/to/dir'
 
 device = 'cuda:0'
 enable_cudnn_benchmark = false
 enable_amp = false
 
-#batch_size = 512
-batch_size = 612
+batch_size = 512
 opt_step_every = 1
 
 save_every = 400
@@ -25,21 +24,21 @@ submit_every = 10000
 # using env `TRAIN_PLAY_PROFILE`
 [train_play.default]
 games = 800
-log_dir = '/home/zacktan/train/Mortal/to/train_play'
+log_dir = '/data/train/Mortal/to/train_play'
 boltzmann_epsilon = 0.005
 boltzmann_temp = 0.05
 repeats = 2
 
 [test_play]
 games = 3000
-log_dir = '/home/zacktan/train/Mortal/to/test_play'
+log_dir = '/data/train/Mortal/to/test_play'
 
 [dataset]
-globs = ['/home/zacktan/train/Mortal/to/dataset/mjai/*/*']
-file_index = '/home/zacktan/train/Mortal/to/file_index.pth'
+globs = ['/data/train/Mortal/to/dataset/mjai/*/*']
+file_index = '/data/train/Mortal/to/file_index.pth'
 file_batch_size = 15
 num_workers = 1
-player_names_files = ['/home/zacktan/train/Mortal/to/dataset/playname']
+player_names_files = ['/data/train/Mortal/to/dataset/playname']
 num_epochs = 1
 enable_augmentation = false
 augmented_first = false
@@ -81,11 +80,11 @@ max_steps = 0
 
 [baseline.train]
 device = 'cuda:0'
-state_file = '/home/zacktan/train/Mortal/to/baseline.pth'
+state_file = '/data/train/Mortal/to/baseline.pth'
 
 [baseline.test]
 device = 'cuda:0'
-state_file = '/home/zacktan/train/Mortal/to/baseline.pth'
+state_file = '/data/train/Mortal/to/baseline.pth'
 
 [online]
 history_window = 50
@@ -95,8 +94,8 @@ host = '127.0.0.1'
 port = 5000
 
 [online.server]
-buffer_dir = '/home/zacktan/train/Mortal/to/buffer'
-drain_dir = '/home/zacktan/train/Mortal/to/drain'
+buffer_dir = '/data/train/Mortal/to/buffer'
+drain_dir = '/data/train/Mortal/to/drain'
 sample_reuse_rate = 0
 sample_reuse_threshold = 0
 capacity = 3600
@@ -108,12 +107,12 @@ stochastic_latent = false
 [1v3]
 games_per_iter = 2000
 iters = 500
-log_dir = '/home/zacktan/train/Mortal/to/1v3'
+log_dir = '/data/train/Mortal/to/1v3'
 
 [1v3.challenger]
 device = 'cuda:0'
 name = 'mortal'
-state_file = '/home/zacktan/train/Mortal/to/best.pth'
+state_file = '/data/train/Mortal/to/mortal.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true
@@ -121,18 +120,18 @@ enable_rule_based_agari_guard = true
 [1v3.champion]
 device = 'cuda:0'
 name = 'baseline'
-state_file = '/home/zacktan/train/Mortal/to/mortalv5.pth'
+state_file = '/data/train/Mortal/to/baseline.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true
 
 [1v3.akochan]
 enabled = false
-dir = '/home/zacktan/train/Mortal/to/akochan'
-tactics = '/home/zacktan/train/Mortal/to/tactics.json'
+dir = '/data/train/Mortal/to/akochan'
+tactics = '/data/train/Mortal/to/tactics.json'
 
 [grp]
-state_file = '/home/zacktan/train/Mortal/to/grp.pth'
+state_file = '/data/train/Mortal/to/grp.pth'
 
 [grp.network]
 hidden_size = 64
@@ -149,14 +148,14 @@ val_steps = 400
 
 [grp.dataset]
 train_globs = [
-    '/home/zacktan/train/Mortal/to/dataset/mjai/*/*',
+    '/data/train/Mortal/to/dataset/mjai/*/*',
     # ...
 ]
 val_globs = [
-    '/home/zacktan/train/Mortal/to/dataset/mjai/0/*',
+    '/data/train/Mortal/to/dataset/mjai/0/*',
     # ...
 ]
-file_index = '/home/zacktan/train/Mortal/to/grp_file_index.pth'
+file_index = '/data/train/Mortal/to/grp_file_index.pth'
 file_batch_size = 50
 
 [grp.optim]
