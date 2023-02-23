@@ -110,7 +110,7 @@ log_dir = '/home/zacktan/train/Mortal/to/1v3'
 [1v3.challenger]
 device = 'cuda:0'
 name = 'mortal'
-state_file = '/home/zacktan/train/Mortal/to/challenger.pth'
+state_file = '/home/zacktan/train/Mortal/to/mortal.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true
@@ -118,15 +118,16 @@ enable_rule_based_agari_guard = true
 [1v3.champion]
 device = 'cuda:0'
 name = 'baseline'
-state_file = '/home/zacktan/train/Mortal/to/baseline.pth'
+state_file = '/home/zacktan/train/Mortal/to/mortal.pth'
 stochastic_latent = false
 enable_amp = true
 enable_rule_based_agari_guard = true
 
 [1v3.akochan]
 enabled = false
-dir = '/home/zacktan/train/Mortal/to/akochan'
-tactics = '/home/zacktan/train/Mortal/to/tactics.json'
+dir = '/home/zacktan/projects/akochan'
+tactics = '/home/zacktan/projects/akochan/setup_mjai.json'
+#tactics = '/home/zacktan/train/Mortal/to/tactics.json'
 
 [grp]
 state_file = '/home/zacktan/train/Mortal/to/grp.pth'
