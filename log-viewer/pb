@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html><head>
-  <meta charset="utf-8">
-  <title>Mahjong Archive Player</title>
-  <link rel="stylesheet" type="text/css" href="files/css/style.css">
-  <script src="files/js/jquery-1.7.2.min.js"></script>
-  <script src="files/js/dytem.js"></script>
-  <script>
-    allActions = `
     `.trim().split('\n').map(s => JSON.parse(s))
     resourceDir = "files";
   </script>

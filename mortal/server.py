@@ -92,21 +92,27 @@ class Handler(BaseRequestHandler):
                 S.idle_param_version = S.param_version
 
     def drain(self):
+        import random
         drained_size = 0
         with S.dir_lock:
             buffer_list = os.listdir(S.buffer_dir)
             raw_count = len(buffer_list)
-            assert raw_count == S.buffer_size
+            reusecnt = 0
+            #assert raw_count == S.buffer_size
             if (not S.force_sequential or raw_count >= S.capacity) and raw_count > 0:
                 old_drain_list = os.listdir(S.drain_dir)
+                random.shuffle(old_drain_list)
                 for filename in old_drain_list:
                     filepath = path.join(S.drain_dir, filename)
-                    os.remove(filepath)
+                    if random.randint(0, 10) < 8:
+                        os.remove(filepath)
+                    else:
+                        reusecnt += 1
                 for filename in buffer_list:
                     src = path.join(S.buffer_dir, filename)
                     dst = path.join(S.drain_dir, filename)
                     shutil.move(src, dst)
-                drained_size = raw_count
+                drained_size = raw_count + reusecnt
                 S.buffer_size = 0
                 logging.info(f'files transfered to trainer: {drained_size}')
                 logging.info(f'total buffer size: {S.buffer_size}')
