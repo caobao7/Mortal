@@ -44,7 +44,7 @@ enable_augmentation = false
 augmented_first = false
 
 [env]
-gamma = 0.75
+gamma = 1
 pts = [3.0, 1.5, 0.0, -4.5]
 #pts = [3.0, 1.7, -0.2, -4.5]
 
