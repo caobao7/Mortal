@@ -67,6 +67,7 @@ def train():
     logging.info(f'next_rank_pred params: {parameter_count(next_rank_pred):,}')
     logging.info(f'obs shape: {obs_shape(version)}')
 
+
     mortal.freeze_bn(config['freeze_bn']['mortal'])
     mortal.set_bn_attrs(**config['bn_attrs'])
 
@@ -209,7 +210,6 @@ def train():
             #assert masks[range(batch_size), actions].all()
             if not masks[range(batch_size), actions].all():
                 continue
-            # action数*reward，然后这个action数好像不止是自己的action数，变成了target？？ @zacktan
             q_target_mc = gamma ** steps_to_done * kyoku_rewards
             q_target_mc = q_target_mc.to(torch.float32)
 
